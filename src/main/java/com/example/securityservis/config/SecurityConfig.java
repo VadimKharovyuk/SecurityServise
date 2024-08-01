@@ -34,6 +34,7 @@ public class SecurityConfig {
                         .loginPage("/api/users/login")
                         .defaultSuccessUrl("/", true) // URL после успешного входа
 
+
                         .permitAll()
                 ))
 
