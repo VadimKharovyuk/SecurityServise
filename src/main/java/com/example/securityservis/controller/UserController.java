@@ -17,8 +17,6 @@ public class UserController {
 
     private final UserService userService;
 
-
-
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAll();
@@ -66,15 +64,13 @@ public class UserController {
         boolean blocked = userService.isBlocked(username);
         return ResponseEntity.ok(blocked);
     }
-
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
         User user = userService.findByUsername(username);
-
         if (user == null || !userService.getPasswordEncoder().matches(password, user.getPassword())) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
-
         return ResponseEntity.ok("Login successful");
     }
+
 }
