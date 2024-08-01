@@ -33,6 +33,7 @@ public class UserService {
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new RuntimeException("Email already exists");
         }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         // Установите роль по умолчанию
         user.setRole(User.Role.USER);
         User newUser = userRepository.save(user);

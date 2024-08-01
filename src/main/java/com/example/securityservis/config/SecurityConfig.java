@@ -10,7 +10,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -19,29 +18,29 @@ public class SecurityConfig {
 
     private final CustomUserDetailsService userDetailsService;
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        httpSecurity
-                .authorizeHttpRequests((req -> req
-                        .requestMatchers("/api/users/login", "/", "/pic/**", "/api/users/forgot-password", "/api/users/register").permitAll()
-                        .anyRequest().authenticated()
-                ))
-                .formLogin((form) -> form
-                        .loginPage("/api/users/login")
-                        .defaultSuccessUrl("/", true)
-                        .permitAll()
-                )
-                .logout((log) -> log
-                        .logoutUrl("/api/users/logout")
-                        .logoutSuccessUrl("/login?logout=true")
-                        .permitAll()
-                )
-                .exceptionHandling((ex) -> ex
-                        .accessDeniedPage("/access-denied")
-                )
-                .csrf().disable(); // Отключение CSRF, если это необходимо
-        return httpSecurity.build();
-    }
+@Bean
+public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    http
+            .authorizeHttpRequests((req) -> req
+                    .requestMatchers("/categories/**", "/products/**").authenticated() // Требует аутентификацию для /categories и /products
+                    .anyRequest().permitAll() // Разрешает доступ ко всем остальным запросам
+            )
+            .formLogin((form) -> form
+                    .loginPage("/login") // Укажите URL вашей страницы входа
+                    .defaultSuccessUrl("/", true) // URL после успешного входа
+                    .permitAll() // Разрешает доступ к странице входа
+            )
+            .logout((log) -> log
+                    .logoutUrl("/logout")
+                    .logoutSuccessUrl("/login?logout=true")
+                    .permitAll() // Разрешает доступ к выходу
+            )
+            .exceptionHandling((ex) -> ex
+                    .accessDeniedPage("/access-denied") // Страница для заблокированных пользователей
+            )
+            .csrf().disable(); // Отключение CSRF защиты, если это необходимо
+    return http.build();
+}
 
     @Bean
     public PasswordEncoder passwordEncoder() {

@@ -66,11 +66,17 @@ public class UserController {
     }
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+
         User user = userService.findByUsername(username);
-        if (user == null || !userService.getPasswordEncoder().matches(password, user.getPassword())) {
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+        }
+        boolean passwordMatches = userService.getPasswordEncoder().matches(password, user.getPassword());
+        if (!passwordMatches) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
         return ResponseEntity.ok("Login successful");
     }
+
 
 }
