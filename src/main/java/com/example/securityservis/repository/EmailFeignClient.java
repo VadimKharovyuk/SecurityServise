@@ -12,8 +12,10 @@ public interface EmailFeignClient {
     @PostMapping("/api/email/send")
     String sendEmail(@RequestBody EmailRequest emailRequest);
 
+
     @PostMapping("/api/email/password")
-    String sendEmailPassword(@RequestParam String emailRequest);
+    String sendEmailPassword(@RequestParam String emailRequest, @RequestParam String newPassword);
+
 
 
 }

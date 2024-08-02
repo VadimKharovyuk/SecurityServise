@@ -104,6 +104,16 @@ public class UserService {
         return user != null && user.isBlocked();
     }
 
+
+
+    public void updatePassword(String email, String newPassword) {
+        User user = userRepository.findByEmail(email);
+        if (user != null) {
+            user.setPassword(passwordEncoder.encode(newPassword)); // Хэширование пароля
+            userRepository.save(user);
+        }
+    }
+
 }
 
 

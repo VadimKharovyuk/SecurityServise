@@ -1,4 +1,5 @@
 package com.example.securityservis.service;
+
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
@@ -12,9 +13,9 @@ public class PasswordGenerator {
     private static final String OTHER_CHAR = "!@#$%*";
 
     private static final String DATA_FOR_RANDOM_STRING = CHAR_LOWER + CHAR_UPPER + NUMBER + OTHER_CHAR;
-    private static SecureRandom random = new SecureRandom();
+    private static final SecureRandom random = new SecureRandom();
 
-    public static String generateNewPassword(int length) {
+    public String generateNewPassword(int length) {
         if (length < 1) throw new IllegalArgumentException();
 
         StringBuilder sb = new StringBuilder(length);
@@ -28,4 +29,3 @@ public class PasswordGenerator {
         return sb.toString();
     }
 }
-
