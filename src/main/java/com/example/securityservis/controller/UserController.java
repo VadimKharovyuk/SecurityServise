@@ -27,7 +27,7 @@ public class UserController {
     public ResponseEntity<User> registerUser(@RequestBody User user) {
         if (userService.existsByEmail(user.getEmail())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null); // Return an appropriate error message if email already exists
+                    .body(null);
         }
         User newUser = userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(newUser);

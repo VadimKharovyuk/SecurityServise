@@ -99,10 +99,11 @@ public class UserService {
         });
     }
 
-
     public boolean isBlocked(String username) {
         User user = findByUsername(username);
         return user != null && user.isBlocked();
     }
 
 }
+
+

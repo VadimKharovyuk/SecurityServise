@@ -21,8 +21,9 @@ public class SecurityConfig {
 @Bean
 public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
     http
+
             .authorizeHttpRequests((req) -> req
-                    .requestMatchers("/categories/**", "/products/**").authenticated() // Требует аутентификацию для /categories и /products
+                    .requestMatchers("/categories/**", "/products/**").authenticated()
                     .anyRequest().permitAll() // Разрешает доступ ко всем остальным запросам
             )
             .formLogin((form) -> form
