@@ -1,5 +1,6 @@
 package com.example.securityservis.controller;
 
+import com.example.securityservis.dto.UserDTO;
 import com.example.securityservis.model.User;
 import com.example.securityservis.service.UserService;
 import lombok.AllArgsConstructor;
@@ -64,19 +65,42 @@ public class UserController {
         boolean blocked = userService.isBlocked(username);
         return ResponseEntity.ok(blocked);
     }
-    @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-
-        User user = userService.findByUsername(username);
-        if (user == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-        }
-        boolean passwordMatches = userService.getPasswordEncoder().matches(password, user.getPassword());
-        if (!passwordMatches) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-        }
-        return ResponseEntity.ok("Login successful");
+//    @PostMapping("/login")
+//    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
+//
+//        User user = userService.findByUsername(username);
+//        if (user == null) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
+//        }
+//        boolean passwordMatches = userService.getPasswordEncoder().matches(password, user.getPassword());
+//        if (!passwordMatches) {
+//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+//        }
+//        return ResponseEntity.ok("Login successful");
+//    }
+@PostMapping("/login")
+public ResponseEntity<UserDTO> login(@RequestParam String username, @RequestParam String password) {
+    User user = userService.findByUsername(username);
+    if (user == null) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
+
+    boolean passwordMatches = userService.getPasswordEncoder().matches(password, user.getPassword());
+    if (!passwordMatches) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+    }
+
+    UserDTO userDTO = new UserDTO();
+    userDTO.setId(user.getId());
+    userDTO.setUsername(user.getUsername());
+    userDTO.setEmail(user.getEmail());
+    userDTO.setRole(user.getRole().name());
+    userDTO.setPassword(user.getPassword()); // Убедитесь, что пароль передается
+
+    return ResponseEntity.ok(userDTO);
+}
+
+
 
 
 }
