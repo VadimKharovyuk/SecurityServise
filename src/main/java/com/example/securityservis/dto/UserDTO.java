@@ -10,5 +10,6 @@ public class UserDTO {
     private String username;
     private String email;
     private String role;
-    private String password; // Добавьте это поле
+    private String password;
+    private boolean blocked;
 }

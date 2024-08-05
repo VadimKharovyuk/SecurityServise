@@ -18,21 +18,29 @@ public class UserController {
 
     private final UserService userService;
 
+
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 
-    @PostMapping("/register")
-    public ResponseEntity<User> registerUser(@RequestBody User user) {
-        if (userService.existsByEmail(user.getEmail())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(null);
-        }
-        User newUser = userService.registerUser(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
-    }
+@PostMapping("/register")
+public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
+    User user = new User();
+    user.setUsername(userDTO.getUsername());
+    user.setEmail(userDTO.getEmail());
+    user.setPassword(userDTO.getPassword());
+    User newUser = userService.registerUser(user);
+
+    UserDTO newUserDTO = new UserDTO();
+    newUserDTO.setId(newUser.getId());
+    newUserDTO.setUsername(newUser.getUsername());
+    newUserDTO.setEmail(newUser.getEmail());
+    newUserDTO.setRole(newUser.getRole().name());
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(newUserDTO);
+}
 
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(
@@ -65,40 +73,32 @@ public class UserController {
         boolean blocked = userService.isBlocked(username);
         return ResponseEntity.ok(blocked);
     }
-//    @PostMapping("/login")
-//    public ResponseEntity<String> login(@RequestParam String username, @RequestParam String password) {
-//
-//        User user = userService.findByUsername(username);
-//        if (user == null) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User not found");
-//        }
-//        boolean passwordMatches = userService.getPasswordEncoder().matches(password, user.getPassword());
-//        if (!passwordMatches) {
-//            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-//        }
-//        return ResponseEntity.ok("Login successful");
-//    }
+
 @PostMapping("/login")
 public ResponseEntity<UserDTO> login(@RequestParam String username, @RequestParam String password) {
-    User user = userService.findByUsername(username);
-    if (user == null) {
+    // Проверка существования пользователя
+    if (userService.isBlocked(username)) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // Возвращаем FORBIDDEN если заблокирован
+    }
+
+    UserDTO userDTO = userService.findByUsernameDto(username);
+    if (userDTO == null) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
-    boolean passwordMatches = userService.getPasswordEncoder().matches(password, user.getPassword());
+    // Проверка совпадения пароля
+    boolean passwordMatches = userService.getPasswordEncoder().matches(password, userDTO.getPassword());
     if (!passwordMatches) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
     }
 
-    UserDTO userDTO = new UserDTO();
-    userDTO.setId(user.getId());
-    userDTO.setUsername(user.getUsername());
-    userDTO.setEmail(user.getEmail());
-    userDTO.setRole(user.getRole().name());
-    userDTO.setPassword(user.getPassword()); // Убедитесь, что пароль передается
-
     return ResponseEntity.ok(userDTO);
 }
+
+
+
+
+
 
 
 

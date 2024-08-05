@@ -1,6 +1,7 @@
 package com.example.securityservis.service;
 
 import com.example.securityservis.dto.EmailRequest;
+import com.example.securityservis.dto.UserDTO;
 import com.example.securityservis.model.User;
 import com.example.securityservis.repository.EmailFeignClient;
 import com.example.securityservis.repository.UserRepository;
@@ -8,6 +9,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -114,6 +116,23 @@ public class UserService {
         }
     }
 
+
+    public UserDTO findByUsernameDto(String username) {
+        User user = userRepository.findByUsername(username);
+        if (user != null) {
+            UserDTO userDTO = new UserDTO();
+            userDTO.setId(user.getId());
+            userDTO.setUsername(user.getUsername());
+            userDTO.setEmail(user.getEmail());
+            userDTO.setRole(user.getRole().name());
+            userDTO.setPassword(user.getPassword());
+            return userDTO;
+        }
+        return null;
+    }
+    public BCryptPasswordEncoder getPasswordEncoder() {
+        return (BCryptPasswordEncoder) passwordEncoder;
+    }
 }
 
 
