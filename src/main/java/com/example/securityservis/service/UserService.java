@@ -5,14 +5,14 @@ import com.example.securityservis.dto.UserDTO;
 import com.example.securityservis.model.User;
 import com.example.securityservis.repository.EmailFeignClient;
 import com.example.securityservis.repository.UserRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -132,6 +132,17 @@ public class UserService {
     }
     public BCryptPasswordEncoder getPasswordEncoder() {
         return (BCryptPasswordEncoder) passwordEncoder;
+    }
+
+
+
+    public ResponseEntity<Void> deleteUserById(Long id) {
+        if (userRepository.existsById(id)) {
+            userRepository.deleteById(id);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Возвращаем статус 404 Not Found, если пользователь не найден
+        }
     }
 }
 

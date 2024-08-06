@@ -2,6 +2,7 @@ package com.example.securityservis.controller;
 
 import com.example.securityservis.dto.UserDTO;
 import com.example.securityservis.model.User;
+import com.example.securityservis.repository.UserRepository;
 import com.example.securityservis.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,6 +18,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
 
 
     @GetMapping
@@ -94,6 +96,13 @@ public ResponseEntity<UserDTO> login(@RequestParam String username, @RequestPara
 
     return ResponseEntity.ok(userDTO);
 }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        ResponseEntity<Void> response = userService.deleteUserById(id);
+        return response; // Передаем ответ от сервиса напрямую
+    }
+
 
 
 
