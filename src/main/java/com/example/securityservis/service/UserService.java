@@ -108,13 +108,13 @@ public class UserService {
 
 
 
-    public void updatePassword(String email, String newPassword) {
-        User user = userRepository.findByEmail(email);
-        if (user != null) {
-            user.setPassword(passwordEncoder.encode(newPassword)); // Хэширование пароля
-            userRepository.save(user);
-        }
-    }
+//    public void updatePassword(String email, String newPassword) {
+//        User user = userRepository.findByEmail(email);
+//        if (user != null) {
+//            user.setPassword(passwordEncoder.encode(newPassword)); // Хэширование пароля
+//            userRepository.save(user);
+//        }
+//    }
 
 
     public UserDTO findByUsernameDto(String username) {
@@ -144,6 +144,44 @@ public class UserService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); // Возвращаем статус 404 Not Found, если пользователь не найден
         }
     }
+
+
+
+
+
+    public Optional<UserDTO> findUserByEmail(String email) {
+        return userRepository.findByEmail(email).map(this::convertToDTO);
+    }
+
+
+    private UserDTO convertToDTO(User user) {
+        UserDTO dto = new UserDTO();
+        dto.setId(user.getId());
+        dto.setUsername(user.getUsername());
+        dto.setEmail(user.getEmail());
+        dto.setRole(String.valueOf(user.getRole()));
+        dto.setBlocked(user.isBlocked());
+        // Не храните пароль в DTO по соображениям безопасности
+        return dto;
+    }
+
+    private User convertToEntity(UserDTO userDTO) {
+        User user = new User();
+        user.setId(userDTO.getId());
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setRole(User.Role.valueOf(userDTO.getRole()));
+        user.setBlocked(userDTO.isBlocked());
+        // Хэшируйте пароль перед сохранением
+        user.setPassword(userDTO.getPassword());
+        return user;
+    }
+
+    public void save(UserDTO userDTO) {
+        User user = convertToEntity(userDTO);
+        userRepository.save(user);
+    }
+
 }
 
 

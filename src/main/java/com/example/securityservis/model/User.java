@@ -1,10 +1,13 @@
 package com.example.securityservis.model;
 
+import com.example.securityservis.dto.UserDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.Optional;
 
 @Entity
 @AllArgsConstructor
@@ -28,6 +31,8 @@ public class User {
 
     @Column(name = "blocked")
     private boolean blocked = false;
+
+
 
     public enum Role {
         USER, ADMIN
