@@ -29,7 +29,7 @@ public class PasswordResetController {
         Optional<UserDTO> userOpt = userService.findUserByEmail(email);
         if (userOpt.isPresent()) {
             UserDTO user = userOpt.get();
-            String newPassword = passwordGenerator.generateNewPassword(10); // длина пароля, например, 10 символов
+            String newPassword = passwordGenerator.generateNewPassword(6); // длина пароля, например, 10 символов
 
             // Хэшируйте пароль перед сохранением
             String hashedPassword = hashPassword(newPassword);
