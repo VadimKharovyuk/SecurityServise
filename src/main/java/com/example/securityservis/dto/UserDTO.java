@@ -1,10 +1,14 @@
 package com.example.securityservis.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.example.securityservis.model.User;
+import lombok.*;
+
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserDTO {
     private Long id;
     private String username;
@@ -12,4 +16,7 @@ public class UserDTO {
     private String role;
     private String password;
     private boolean blocked;
+
+
+
 }

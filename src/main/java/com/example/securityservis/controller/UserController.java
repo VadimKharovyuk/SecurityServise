@@ -20,29 +20,28 @@ public class UserController {
     private final UserService userService;
 
 
-
     @GetMapping
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.findAll();
         return ResponseEntity.ok(users);
     }
 
-@PostMapping("/register")
-public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
-    User user = new User();
-    user.setUsername(userDTO.getUsername());
-    user.setEmail(userDTO.getEmail());
-    user.setPassword(userDTO.getPassword());
-    User newUser = userService.registerUser(user);
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
+        User user = new User();
+        user.setUsername(userDTO.getUsername());
+        user.setEmail(userDTO.getEmail());
+        user.setPassword(userDTO.getPassword());
+        User newUser = userService.registerUser(user);
 
-    UserDTO newUserDTO = new UserDTO();
-    newUserDTO.setId(newUser.getId());
-    newUserDTO.setUsername(newUser.getUsername());
-    newUserDTO.setEmail(newUser.getEmail());
-    newUserDTO.setRole(newUser.getRole().name());
+        UserDTO newUserDTO = new UserDTO();
+        newUserDTO.setId(newUser.getId());
+        newUserDTO.setUsername(newUser.getUsername());
+        newUserDTO.setEmail(newUser.getEmail());
+        newUserDTO.setRole(newUser.getRole().name());
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(newUserDTO);
-}
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUserDTO);
+    }
 
     @PutMapping("/change-password")
     public ResponseEntity<String> changePassword(
@@ -76,26 +75,26 @@ public ResponseEntity<UserDTO> registerUser(@RequestBody UserDTO userDTO) {
         return ResponseEntity.ok(blocked);
     }
 
-@PostMapping("/login")
-public ResponseEntity<UserDTO> login(@RequestParam String username, @RequestParam String password) {
-    // Проверка существования пользователя
-    if (userService.isBlocked(username)) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // Возвращаем FORBIDDEN если заблокирован
-    }
+    @PostMapping("/login")
+    public ResponseEntity<UserDTO> login(@RequestParam String username, @RequestParam String password) {
+        // Проверка существования пользователя
+        if (userService.isBlocked(username)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null); // Возвращаем FORBIDDEN если заблокирован
+        }
 
-    UserDTO userDTO = userService.findByUsernameDto(username);
-    if (userDTO == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-    }
+        UserDTO userDTO = userService.findByUsernameDto(username);
+        if (userDTO == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
 
-    // Проверка совпадения пароля
-    boolean passwordMatches = userService.getPasswordEncoder().matches(password, userDTO.getPassword());
-    if (!passwordMatches) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-    }
+        // Проверка совпадения пароля
+        boolean passwordMatches = userService.getPasswordEncoder().matches(password, userDTO.getPassword());
+        if (!passwordMatches) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
 
-    return ResponseEntity.ok(userDTO);
-}
+        return ResponseEntity.ok(userDTO);
+    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
@@ -103,13 +102,16 @@ public ResponseEntity<UserDTO> login(@RequestParam String username, @RequestPara
         return response; // Передаем ответ от сервиса напрямую
     }
 
-
-
-
-
-
-
-
+    @GetMapping("/{username}")
+    public ResponseEntity<UserDTO> getUserByUsername(@PathVariable String username) {
+        System.out.println("Fetching user with username: " + username);
+        UserDTO user = userService.getUserByUsername(username);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 
 
 }

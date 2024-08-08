@@ -182,6 +182,21 @@ public class UserService {
         userRepository.save(user);
     }
 
+
+    public UserDTO getUserByUsername(String username) {
+        User user = userRepository.findByUsername(username); // Получаем пользователя или null
+        if (user != null) {
+            // Используем Builder для создания UserDTO
+            return UserDTO.builder()
+                    .id(user.getId())
+                    .username(user.getUsername())
+                    .role(String.valueOf(user.getRole()))
+                    .build();
+        } else {
+            return null; // Возвращаем null, если пользователь не найден
+        }
+    }
+
 }
 
 
